@@ -1,4 +1,5 @@
 import pyxrootd
+import six
 import uproot
 
 print "Importing uproot and pyroott worked fine"
@@ -15,3 +16,22 @@ ept = tree["Electron_pt"]
 print "Loaded tree. Printing Electron pt"
 print ept
 print tree.array("Electron_pt")
+
+
+branches = ["Electron_pt", "Muon_pt"]
+
+# helper for better, chunked uproot iteration
+
+
+def uproot_iter(tree, branches, **kwargs):
+    for start, stop, chunk in tree.iterate(branches, reportentries=True, **kwargs):
+        for i in six.moves.range(stop - start):
+            yield {key: arr[i] for key, arr in six.iteritems(chunk)}
+
+
+for i, event in enumerate(uproot_iter(tree, branches)):
+    print i, event
+    print event["Electron_pt"]
+    if(i > 20):
+        break
+        # pass
