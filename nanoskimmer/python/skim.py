@@ -126,11 +126,8 @@ def skimmer(filename, outputName):
     #         xSec = xSecFile[key]["xsec"]
 
     # isData = "Single" in outputName
-    print "build skimmer"
     Skimmer = ROOT.Skimmer(
         ROOT.std.string(filename), ROOT.std.string(filename))
-    print "skimmer built"
-    # skimmer.Configure(xSec)
     Skimmer.Analyze()
     outName = filename.split(
         "/")[-1].split(".")[0] + "_output." + filename.split("/")[-1].split(".")[1]

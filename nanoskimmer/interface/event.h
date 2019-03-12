@@ -26,6 +26,8 @@
 #include <TMath.h>
 
 #include <ttjet/nanoskimmer/interface/particles.h>
+#include <ttjet/nanoskimmer/interface/filters.h>
+#include <ttjet/nanoskimmer/interface/skimmer.h>
 
 class Event {
 private:
@@ -48,7 +50,10 @@ bool trigMuEle;
 
 public:
 Event();
+Event(Skimmer *skim);
 // SetElectrons(TTreeReaderValue<int> &nEle, TTreeReaderArray &Pt,TTreeReaderArray &Phi,TTreeReaderArray &Eta,TTreeReaderArray &Mass);
+Skimmer *skimmer;
+
 void SetElectrons();
 void SetMuons();
 void SetJets();

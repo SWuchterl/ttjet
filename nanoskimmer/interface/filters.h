@@ -26,23 +26,35 @@
 
 #include <ttjet/nanoskimmer/interface/particles.h>
 #include <ttjet/nanoskimmer/interface/event.h>
+#include <ttjet/nanoskimmer/interface/skimmer.h>
+
+enum TriggerCombination {E,M,EE,MM,EM,ME};
 
 class Filter {
+protected:
+bool decision;
+Skimmer *skimmer;
 public:
 Filter();
+Filter(Skimmer *skim);
 };
 
 class MetFilter : public Filter {
-
-bool getDecision(Event &event){
-        return false;
-}
+public:
+MetFilter(const int &year);
+bool getDecision();
 };
 
 
 class TriggerFilter : public Filter {
-bool getDecision(Event &event){
-        return false;
-}
+private:
+bool decisionE=false;
+bool decisionM=false;
+bool decisionEE=false;
+bool decisionMM=false;
+bool decisionEM=false;
+public:
+TriggerFilter(const int &year);
+bool getDecision(const TriggerCombination &combination);
 };
 #endif /* FILTERS_H */

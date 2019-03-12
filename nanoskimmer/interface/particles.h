@@ -26,7 +26,7 @@ struct GenParticle : public Particle
 struct Lepton : public Particle
 {
         Char_t charge;
-        Float_t isolation;
+        // Float_t isolation;
         // float passImpactParameter;
 };
 
@@ -69,9 +69,6 @@ struct Electron : public Lepton
 
 struct Jet : public Particle
 {
-        Bool_t isLoose;
-        Bool_t isMedium;
-        Bool_t isTight;
         Bool_t hasElectronMatch;
         Bool_t hasMuonMatch;
 
