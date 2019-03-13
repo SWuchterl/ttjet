@@ -56,7 +56,7 @@ public:
 // TFile* file = TFile::Open(inFile.c_str(), "READ");
 // Skimmer(TFile* file, string Name);
 // Skimmer(const string &inputFileName, const string &Name);
-Skimmer(const string &inputFileName_, const string &dataSetName_);
+Skimmer(const string &inputFileName_, const string &dataSetName_,const string &outName);
 
 bool Analyze();
 
@@ -65,10 +65,11 @@ bool Analyze();
 // TriggerFilter *TrigFilter;
 // MetFilter *METFilter;
 
-TTree *tree;
+// TTree *tree;
+std::vector<TTree*> trees;
 
 void ProgressBar(const int &progress);
-void CreateOutputTree(const std::string &outFile);
+// TTree CreateOutputTree(const std::string &outFile);
 void WriteOutput(const std::string &outFile);
 
 };

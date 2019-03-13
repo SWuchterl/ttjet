@@ -35,16 +35,33 @@ MetFilter::MetFilter(){
         Filter();
 };
 
-MetFilter::MetFilter(MyReader &skim,const int &year){
-        Filter();
-        // skimmer=skim;
+// MetFilter::MetFilter(MyReader &skim,const int &year){
+//         Filter();
+//         // skimmer=skim;
+//         if(year==2016) {
+//                 decision=(*(skim.metFilter_ECALTP) &&
+//                 *(skim.metFilter_beamHalo) &&
+//                 *(skim.metFilter_HBHENoise)
+//                 && *(skim.metFilter_HBHENoiseIso)
+//                 && *(skim.metFilter_eeBadSCNoise)
+//                 && *(skim.metFilter_primaryVertex)
+//                 && *(skim.metFilter_BadChargedHadron));
+//         }else{
+//                 decision=false;
+//         }
+// };
+
+bool MetFilter::getDecision(MyReader &skim,const int &year){
         if(year==2016) {
-                decision=(*(skim.metFilter_ECALTP) && *(skim.metFilter_beamHalo) && *(skim.metFilter_HBHENoise) && *(skim.metFilter_HBHENoiseIso) && *(skim.metFilter_eeBadSCNoise) && *(skim.metFilter_primaryVertex) && *(skim.metFilter_BadChargedHadron));
+                decision=(*(skim.metFilter_ECALTP) &&
+                          *(skim.metFilter_beamHalo) &&
+                          *(skim.metFilter_HBHENoise)
+                          && *(skim.metFilter_HBHENoiseIso)
+                          && *(skim.metFilter_eeBadSCNoise)
+                          && *(skim.metFilter_primaryVertex)
+                          && *(skim.metFilter_BadChargedHadron));
         }else{
                 decision=false;
         }
-};
-
-bool MetFilter::getDecision(){
         return decision;
 };

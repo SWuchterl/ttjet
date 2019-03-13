@@ -64,8 +64,8 @@ def getFilenames(txtFile):
                 "/")[5]] = [global_director + setname]
 
         else:
-            filelist[setname.split("/")[1] + "-" + setname.split("/")[2]] = [global_director +
-                                                                             filename['logical_file_name'] for filename in dbs.listFiles(dataset=setname, detail=1)]
+            filelist[setname.split("/")[1] + "-" + setname.split("/")[2]] = [global_director
+                                                                             + filename['logical_file_name'] for filename in dbs.listFiles(dataset=setname, detail=1)]
 
     return filelist
 
@@ -126,13 +126,14 @@ def skimmer(filename, outputName):
     #         xSec = xSecFile[key]["xsec"]
 
     # isData = "Single" in outputName
-    Skimmer = ROOT.Skimmer(
-        ROOT.std.string(filename), ROOT.std.string(filename))
-    Skimmer.Analyze()
     outName = filename.split(
         "/")[-1].split(".")[0] + "_output." + filename.split("/")[-1].split(".")[1]
-    Skimmer.CreateOutputTree(
-        ROOT.std.string(outName))
+    Skimmer = ROOT.Skimmer(
+        ROOT.std.string(filename), ROOT.std.string(filename), outName)
+    Skimmer.Analyze()
+
+    # Skimmer.CreateOutputTree(
+    #     ROOT.std.string(outName))
     Skimmer.WriteOutput(ROOT.std.string(outName))
 
 

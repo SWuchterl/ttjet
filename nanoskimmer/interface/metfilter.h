@@ -30,11 +30,11 @@
 #include <ttjet/nanoskimmer/interface/myReader.h>
 #include <ttjet/nanoskimmer/interface/filter.h>
 
-class MetFilter: public Filter{
+class MetFilter: public Filter {
 public:
         MetFilter();
-        MetFilter(MyReader &skim,const int &year);
-        bool getDecision();
+        // MetFilter(MyReader &skim,const int &year);
+        bool getDecision(MyReader &skim,const int &year);
 };
 
 #endif

@@ -36,17 +36,53 @@ using namespace std;
 
 Event::Event(){
 };
-Event::Event(MyReader &skim_,TriggerFilter &trigF_,MetFilter &metF_,RoccoR &rocco_, bool &Data){
+// Event::Event(MyReader &skim_,TriggerFilter &trigF_,MetFilter &metF_,RoccoR &rocco_,PileupWeighter &PUWeighter_, bool &Data){
+Event::Event(bool &Data){
         // skim=skim_;
-        trigF=trigF_;
-        metF=metF_;
-        rocco=rocco_;
+        // trigF=trigF_;
+        // metF=metF_;
+        // rocco=rocco_;
+        // PUWeighter=PUWeighter_;
         isData=Data;
 };
+
+
+void Event::SetAdresses(MyReader &skim, TTree* tree){
+        tree->Branch("electrons", &electrons);
+        tree->Branch("muons", &muons);
+        tree->Branch("jets", &jets);
+        tree->Branch("met", &met);
+        tree->Branch("genWeight", &mc_weight);
+        tree->Branch("puWeight", &pu_weight);
+        tree->Branch("trigSingleEle", &trigSingleEle);
+        tree->Branch("trigSingleMu", &trigSingleMu);
+        tree->Branch("trigDoubleEle", &trigDoubleEle);
+        tree->Branch("trigDoubleMu", &trigDoubleMu);
+        tree->Branch("trigMuEle", &trigMuEle);
+
+};
+
+void Event::Clear(){
+        electrons.clear();
+        muons.clear();
+        jets.clear();
+
+        pu_weight=1.;
+        mc_weight=1.;
+
+        ht=0.;
+
+        trigSingleEle=false;
+        trigSingleMu=false;
+        trigDoubleEle=false;
+        trigDoubleMu=false;
+        trigMuEle=false;
+};
+
 // Event::Event(){
 //   ree->Branch("electron", &validElectrons);
 // };
-void Event::SetMuons(MyReader &skim){
+void Event::SetMuons(MyReader &skim,RoccoR &rocco){
 
 
         for(unsigned int i=0; i<*(skim.nMuons); i++) {
@@ -60,6 +96,7 @@ void Event::SetMuons(MyReader &skim){
                         if(abs(skim.genPartId.At(skim.muonGenParticleIndex.At(i)))==13) {
                                 SF=rocco.kSpreadMC(skim.muonCharge.At(i), (skim.muonPt).At(i), (skim.muonEta).At(i), (skim.muonPhi).At(i),skim.genPartPt.At(skim.muonGenParticleIndex.At(i)), 0, 0);
                         }else{
+                                // to be corrected
                                 SF=rocco.kSmearMC(skim.muonCharge.At(i), (skim.muonPt).At(i), (skim.muonEta).At(i), (skim.muonPhi).At(i), 3, 0.5, 0, 0);
                         }
                 }
@@ -131,12 +168,13 @@ void Event::SetJets(MyReader &skim){
         }
 };
 //
-void Event::SetValues(MyReader &skim){
+void Event::SetValues(MyReader &skim, TTree* tree, TriggerFilter &trigF,const int &year, PileupWeighter &PUWeighter){
+
         met.L.SetPtEtaPhiM(*(skim.metPt),0.,*(skim.metPhi),0.);
         // particle met_JECu;
 
 
-        pu_weight=1.; //todo
+        pu_weight=PUWeighter.GetWeight(*(skim.nPUTrueInt),isData); //todo
         mc_weight=*(skim.genWeight);
         //
         ht=10.;
@@ -144,9 +182,9 @@ void Event::SetValues(MyReader &skim){
 
 
 
-        trigSingleEle=trigF.getDecision(E);
-        trigSingleMu=trigF.getDecision(M);
-        trigDoubleEle=trigF.getDecision(EE);
-        trigDoubleMu=trigF.getDecision(MM);
-        trigMuEle=trigF.getDecision(EM);
+        trigSingleEle=trigF.getDecision(skim,year,E);
+        trigSingleMu=trigF.getDecision(skim,year,M);
+        trigDoubleEle=trigF.getDecision(skim,year,EE);
+        trigDoubleMu=trigF.getDecision(skim,year,MM);
+        trigMuEle=trigF.getDecision(skim,year,EM);
 };

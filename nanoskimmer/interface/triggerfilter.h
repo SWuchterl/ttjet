@@ -31,7 +31,7 @@
 // #include <ttjet/nanoskimmer/interface/filter.h>
 #include <ttjet/nanoskimmer/interface/triggerfilter.h>
 
-class TriggerFilter: public Filter{
+class TriggerFilter: public Filter {
 // class TriggerFilter {
 private:
         bool decisionE=false;
@@ -41,8 +41,8 @@ private:
         bool decisionEM=false;
 public:
         TriggerFilter();
-        TriggerFilter(MyReader &skim,const int &year);
-        bool getDecision(const TriggerCombination &combination);
+        // TriggerFilter(MyReader &skim,const int &year);
+        bool getDecision(MyReader &skim,const int &year,const TriggerCombination &combination);
 };
 
 #endif

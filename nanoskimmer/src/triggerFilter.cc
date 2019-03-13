@@ -34,9 +34,26 @@ using namespace std;
 TriggerFilter::TriggerFilter(){
         Filter();
 };
-TriggerFilter::TriggerFilter(MyReader &skim,const int &year){
-        Filter();
-        // skimmer=skim;
+// TriggerFilter::TriggerFilter(MyReader &skim,const int &year){
+//         Filter();
+//         // skimmer=skim;
+//         if(year==2016) {
+//                 decisionE=(*(skim.HLT_SingleEle));
+//                 decisionM=(*(skim.HLT_SingleMu) || *(skim.HLT_SingleMuIso));
+//                 decisionEE=(*(skim.HLT_DoubleEle));
+//                 decisionMM=(*(skim.HLT_DoubleMu)||*(skim.HLT_DoubleMuDZ)||*(skim.HLT_DoubleMuTK)||*(skim.HLT_DoubleMuTkDZ));
+//                 decisionEM=(*(skim.HLT_MuEleLow)||*(skim.HLT_MuEleHigh));
+//         }else{
+//                 decisionE=false;
+//                 decisionM=false;
+//                 decisionEE=false;
+//                 decisionMM=false;
+//                 decisionEM=false;
+//         }
+// };
+
+bool TriggerFilter::getDecision(MyReader &skim,const int &year,const TriggerCombination &combination){
+
         if(year==2016) {
                 decisionE=(*(skim.HLT_SingleEle));
                 decisionM=(*(skim.HLT_SingleMu) || *(skim.HLT_SingleMuIso));
@@ -50,9 +67,8 @@ TriggerFilter::TriggerFilter(MyReader &skim,const int &year){
                 decisionMM=false;
                 decisionEM=false;
         }
-};
 
-bool TriggerFilter::getDecision(const TriggerCombination &combination){
+
         if (combination==E) {
                 return decisionE;
         }

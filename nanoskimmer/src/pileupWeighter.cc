@@ -89,7 +89,7 @@ float PileupWeighter::GetWeight(const float & nPU, const bool &isData){
         if(isData) {
                 return 1.;
         }else{
-                return 1;
+                return weights->GetBinContent(weights->FindBin(nPU));
         }
         return weight;
 };

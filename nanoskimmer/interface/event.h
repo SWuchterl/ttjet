@@ -64,16 +64,20 @@ bool trigMuEle;
 
 public:
 Event();
-Event(MyReader &skim_,TriggerFilter &trigF_,MetFilter &metF_,RoccoR &rocco_, bool &Data);
+// Event(MyReader &skim_,TriggerFilter &trigF_,MetFilter &metF_,RoccoR &rocco_,PileupWeighter &PUWeighter_, bool &Data);
+Event(bool &Data);
 // MyReader skim;
-TriggerFilter trigF;
-MetFilter metF;
-RoccoR rocco;
+// TriggerFilter trigF;
+// MetFilter metF;
+// RoccoR rocco;
+// PileupWeighter PUWeighter;
 
+void Clear();
+void SetAdresses(MyReader &skim, TTree* tree);
 void SetElectrons(MyReader &skim_);
-void SetMuons(MyReader &skim_);
+void SetMuons(MyReader &skim_,RoccoR &rocco);
 void SetJets(MyReader &skim_);
-void SetValues(MyReader &skim_);
+void SetValues(MyReader &skim_, TTree* tree, TriggerFilter &trigF,const int &year, PileupWeighter &PUWeighter);
 bool isData;
 
 // attributes
