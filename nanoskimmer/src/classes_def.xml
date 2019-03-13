@@ -16,4 +16,5 @@
     <class name="Skimmer"/>
     <class name="Event"/>
     <class name="Filter"/>
+    <class name="Weighter"/>
 </lcgdict>

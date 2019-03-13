@@ -41,7 +41,7 @@ Filter(Skimmer *skim);
 
 class MetFilter : public Filter {
 public:
-MetFilter(const int &year);
+MetFilter(Skimmer *skim,const int &year);
 bool getDecision();
 };
 
@@ -54,7 +54,7 @@ bool decisionEE=false;
 bool decisionMM=false;
 bool decisionEM=false;
 public:
-TriggerFilter(const int &year);
+TriggerFilter(Skimmer *skim,const int &year);
 bool getDecision(const TriggerCombination &combination);
 };
 #endif /* FILTERS_H */

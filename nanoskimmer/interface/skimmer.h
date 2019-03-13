@@ -28,6 +28,9 @@
 #include <ttjet/nanoskimmer/interface/event.h>
 #include <ttjet/nanoskimmer/interface/filters.h>
 #include <ttjet/nanoskimmer/interface/particles.h>
+#include <ttjet/nanoskimmer/interface/weighter.h>
+#include <ttjet/nanoskimmer/interface/RoccoR.h>
+
 
 using namespace std;
 
@@ -57,6 +60,7 @@ TTreeReaderArray<bool> muonTightId;
 TTreeReaderArray<float> muonDz;
 TTreeReaderArray<float> muonDxy;
 TTreeReaderArray<unsigned char> muonGenPartFlav;
+TTreeReaderArray<int> muonGenParticleIndex;
 TTreeReaderArray<int> muonCharge;
 
 TTreeReaderValue<uint> nElectrons;
@@ -69,6 +73,7 @@ TTreeReaderArray<float> electronDz;
 TTreeReaderArray<float> electronDxy;
 TTreeReaderArray<float> electronSIP3D;
 TTreeReaderArray<unsigned char> electronGenPartFlav;
+TTreeReaderArray<int> electronGenParticleIndex;
 TTreeReaderArray<bool> electronMVALoose;
 TTreeReaderArray<bool> electronMVAMedium;
 TTreeReaderArray<bool> electronMVATight;
@@ -161,6 +166,10 @@ public:
 Skimmer(const string &inputFileName, const string &Name);
 
 bool Analyze();
+
+// RoccoR rochesterCorrection("ttjet/nanoskimmer/data/rochester/RoccoR2016.txt");
+RoccoR *rochesterCorrection;
+
 
 TTree *tree;
 

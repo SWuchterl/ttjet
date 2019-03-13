@@ -36,7 +36,8 @@ Filter::Filter(Skimmer *skim){
         skimmer=skim;
 };
 
-MetFilter::MetFilter(const int &year){
+MetFilter::MetFilter(Skimmer *skim,const int &year){
+        skimmer=skim;
         if(year==2016) {
                 decision=(*(skimmer->metFilter_ECALTP) && *(skimmer->metFilter_beamHalo) && *(skimmer->metFilter_HBHENoise) && *(skimmer->metFilter_HBHENoiseIso) && *(skimmer->metFilter_eeBadSCNoise) && *(skimmer->metFilter_primaryVertex) && *(skimmer->metFilter_BadChargedHadron));
         }else{
@@ -49,7 +50,8 @@ bool MetFilter::getDecision(){
 };
 
 
-TriggerFilter::TriggerFilter(const int &year){
+TriggerFilter::TriggerFilter(Skimmer *skim,const int &year){
+        skimmer=skim;
         if(year==2016) {
                 decisionE=(*(skimmer->HLT_SingleEle));
                 decisionM=(*(skimmer->HLT_SingleMu) || *(skimmer->HLT_SingleMuIso));

@@ -1,4 +1,3 @@
-#include <ttjet/nanoskimmer/interface/event.h>
 #include <iostream>
 #include <vector>
 #include <string>
@@ -28,6 +27,7 @@
 #include <ttjet/nanoskimmer/interface/particles.h>
 
 #include <ttjet/nanoskimmer/interface/skimmer.h>
+#include <ttjet/nanoskimmer/interface/RoccoR.h>
 
 using namespace std;
 
@@ -40,9 +40,33 @@ Event::Event(Skimmer *skim){
 //   ree->Branch("electron", &validElectrons);
 // };
 void Event::SetMuons(){
+
+        //scale factors for momentum of each muon:
+        // double dtSF = rc.kScaleDT(Q, pt, eta, phi, s=0, m=0); //data
+        // double mcSF = rc.kSpreadMC(Q, pt, eta, phi, genPt, s=0, m=0); //(recommended), MC scale and resolution correction when matched gen muon is available
+        // double mcSF = rc.kSmearMC(Q, pt, eta, phi, nl, u, s=0, m=0); //MC scale and extra smearing when matched gen muon is not available
+        // todo: get genMatched muon
+
+
         for(unsigned int i=0; i<*(skimmer->nMuons); i++) {
                 Muon muon;
-                // muon.L.SetPtEtaPhiM((skimmer->muonPt).At(i),(skimmer->muonEta)->At(i),(skimmer->muonPhi)->At(i),(skimmer->*muonMass)->At(i));
+
+                //calculate rochester muon Pt corrections
+                double SF=1.;
+                if(skimmer->isData) {
+                        SF=skimmer->rochesterCorrection->kScaleDT(skimmer->muonCharge.At(i), skimmer->muonPt.At(i), skimmer->muonEta.At(i), skimmer->muonPhi.At(i), 0, 0);
+                }else{
+                        if(abs(skimmer->genPartId.At(skimmer->muonGenParticleIndex.At(i)))==13) {
+                                SF=skimmer->rochesterCorrection->kSpreadMC(skimmer->muonCharge.At(i), (skimmer->muonPt).At(i), (skimmer->muonEta).At(i), (skimmer->muonPhi).At(i),skimmer->genPartPt.At(skimmer->muonGenParticleIndex.At(i)), 0, 0);
+                        }else{
+                                SF=skimmer->rochesterCorrection->kSmearMC(skimmer->muonCharge.At(i), (skimmer->muonPt).At(i), (skimmer->muonEta).At(i), (skimmer->muonPhi).At(i), 3, 0.5, 0, 0);
+                        }
+                }
+
+                //use them here
+                muon.L.SetPtEtaPhiM((skimmer->muonPt).At(i)*SF,(skimmer->muonEta).At(i),(skimmer->muonPhi).At(i),(skimmer->muonMass).At(i));
+                //or not?
+                // muon.L.SetPtEtaPhiM((skimmer->muonPt).At(i),(skimmer->muonEta).At(i),(skimmer->muonPhi).At(i),(skimmer->muonMass).At(i));
                 muon.charge=skimmer->muonCharge.At(i);
                 muon.isLoose=false;
                 muon.isMedium=(skimmer->muonMediumId.At(i));
@@ -50,6 +74,7 @@ void Event::SetMuons(){
                 muon.isIsoLoose=(skimmer->muonIso.At(i)<0.25);
                 muon.isIsoTight=(skimmer->muonIso.At(i)<0.15);
                 muons.push_back(muon);
+
         }
 };
 void Event::SetElectrons(){
@@ -112,11 +137,11 @@ void Event::SetValues(){
 
         pu_weight=1.; //todo
         mc_weight=*(skimmer->genWeight);
-
+        //
         ht=10.;
-
-        TriggerFilter TrigFilter(2016);
-        MetFilter MetFilter(2016);
+        //
+        TriggerFilter TrigFilter(skimmer,2016);
+        MetFilter MetFilter(skimmer,2016);
 
 
         trigSingleEle=TrigFilter.getDecision(E);

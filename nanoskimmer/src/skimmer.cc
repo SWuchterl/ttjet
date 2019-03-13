@@ -55,6 +55,7 @@ Skimmer::Skimmer(const string &inputFileName, const string &Name) :
         muonDz(reader,"Muon_dz"),
         muonDxy(reader,"Muon_dxy"),
         muonGenPartFlav(reader,"Muon_genPartFlav"),
+        muonGenParticleIndex(reader,"Muon_genPartIdx"),
         muonCharge(reader,"Muon_charge"),
 
         nElectrons(reader,"nElectron"),
@@ -67,6 +68,7 @@ Skimmer::Skimmer(const string &inputFileName, const string &Name) :
         electronDxy(reader,"Electron_dxy"),
         electronSIP3D(reader,"Electron_sip3d"),
         electronGenPartFlav(reader,"Electron_genPartFlav"),
+        electronGenParticleIndex(reader,"Electron_genPartIdx"),
         electronMVALoose(reader,"Electron_mvaFall17V2noIso_WPL"),
         electronMVAMedium(reader,"Electron_mvaFall17V2noIso_WP90"),
         electronMVATight(reader,"Electron_mvaFall17V2noIso_WP80"),
@@ -88,12 +90,12 @@ Skimmer::Skimmer(const string &inputFileName, const string &Name) :
         jetBTagDiscriminator_DeepFlavour(reader,"Jet_btagDeepFlavB"),
         jetRawFactor(reader,"Jet_rawFactor"),
 
-        metPt(reader,"MET_Pt"),
-        metPhi(reader,"MET_Phi"),
-        metPt_Puppi(reader,"PuppiMET_Pt"),
-        metPhi_Puppi(reader,"PuppiMET_Phi"),
-        metPt_Raw(reader,"RawMET_Pt"),
-        metPhi_Raw(reader,"RawMET_Phi"),
+        metPt(reader,"MET_pt"),
+        metPhi(reader,"MET_phi"),
+        metPt_Puppi(reader,"PuppiMET_pt"),
+        metPhi_Puppi(reader,"PuppiMET_phi"),
+        metPt_Raw(reader,"RawMET_pt"),
+        metPhi_Raw(reader,"RawMET_phi"),
 
         nPVertex(reader,"PV_npvs"),
         nGoodPVertex(reader,"PV_npvsGood"),
@@ -137,8 +139,8 @@ Skimmer::Skimmer(const string &inputFileName, const string &Name) :
 
 // 2016
         HLT_SingleEle(reader,"HLT_Ele25_WPTight_Gsf"),
-        HLT_SingleMu(reader," HLT_IsoMu20"),
-        HLT_SingleMuIso(reader," HLT_IsoTkMu20"),
+        HLT_SingleMu(reader,"HLT_IsoMu20"),
+        HLT_SingleMuIso(reader,"HLT_IsoTkMu20"),
         HLT_DoubleMu(reader,"HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL"),
         HLT_DoubleMuDZ(reader,"HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ"),
         HLT_DoubleMuTK(reader,"HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL"),
@@ -154,6 +156,9 @@ Skimmer::Skimmer(const string &inputFileName, const string &Name) :
         std::cout << "Input file for analysis: " + inputFileName << std::endl;
 
         dataSetName=Name;
+
+        rochesterCorrection = new RoccoR("ttjet/nanoskimmer/data/rochester/RoccoR2016.txt");
+
 
         if((Name.find("Double")!=string::npos)||(Name.find("Single")!=string::npos)) {
                 isData=true;
@@ -184,6 +189,10 @@ bool Skimmer::Analyze(){
 
         while(reader.Next()) {
                 Event event(this);
+                event.SetMuons();
+                event.SetElectrons();
+                event.SetJets();
+                event.SetValues();
                 continue;
         }
         return true;

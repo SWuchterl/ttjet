@@ -35,7 +35,11 @@ std::vector<Electron> electrons;
 std::vector<Muon> muons;
 std::vector<Jet> jets;
 Particle met;
-// particle met_JECu;
+Particle met_JECu;
+Particle met_JECd;
+Particle met_JESu;
+Particle met_JESd;
+Particle met_Raw;
 
 float pu_weight;
 float mc_weight;
