@@ -131,7 +131,7 @@ void Event::SetJets(){
 };
 //
 void Event::SetValues(){
-        met.L.SetPtEtaPhiM(*(skimmer->metPt),*(skimmer->metPhi),0.,0.);
+        met.L.SetPtEtaPhiM(*(skimmer->metPt),0.,*(skimmer->metPhi),0.);
         // particle met_JECu;
 
 
