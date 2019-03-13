@@ -26,8 +26,16 @@
 #include <TMath.h>
 
 #include <ttjet/nanoskimmer/interface/particles.h>
-#include <ttjet/nanoskimmer/interface/filters.h>
-#include <ttjet/nanoskimmer/interface/skimmer.h>
+#include <ttjet/nanoskimmer/interface/filter.h>
+#include <ttjet/nanoskimmer/interface/metfilter.h>
+#include <ttjet/nanoskimmer/interface/triggerfilter.h>
+// #include <ttjet/nanoskimmer/interface/skimmer.h>
+#include <ttjet/nanoskimmer/interface/myReader.h>
+#include <ttjet/nanoskimmer/interface/weighter.h>
+#include <ttjet/nanoskimmer/interface/pileupWeighter.h>
+
+#include <ttjet/nanoskimmer/interface/RoccoR.h>
+
 
 class Event {
 private:
@@ -46,6 +54,8 @@ float mc_weight;
 
 float ht;
 
+
+
 bool trigSingleEle;
 bool trigSingleMu;
 bool trigDoubleEle;
@@ -54,14 +64,17 @@ bool trigMuEle;
 
 public:
 Event();
-Event(Skimmer *skim);
-// SetElectrons(TTreeReaderValue<int> &nEle, TTreeReaderArray &Pt,TTreeReaderArray &Phi,TTreeReaderArray &Eta,TTreeReaderArray &Mass);
-Skimmer *skimmer;
+Event(MyReader &skim_,TriggerFilter &trigF_,MetFilter &metF_,RoccoR &rocco_, bool &Data);
+// MyReader skim;
+TriggerFilter trigF;
+MetFilter metF;
+RoccoR rocco;
 
-void SetElectrons();
-void SetMuons();
-void SetJets();
-void SetValues();
+void SetElectrons(MyReader &skim_);
+void SetMuons(MyReader &skim_);
+void SetJets(MyReader &skim_);
+void SetValues(MyReader &skim_);
+bool isData;
 
 // attributes
 

@@ -14,7 +14,11 @@
     <class name="std::vector<Jet>"/>
     <class name="std::vector<Met>"/>
     <class name="Skimmer"/>
+    <class name="MyReader"/>
     <class name="Event"/>
     <class name="Filter"/>
+    <class name="TriggerFilter"/>
+    <class name="MetFilter"/>
     <class name="Weighter"/>
+    <class name="PileupWeighter"/>
 </lcgdict>

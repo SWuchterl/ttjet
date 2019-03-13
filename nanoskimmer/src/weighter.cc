@@ -5,7 +5,7 @@
 
 
 Weighter::Weighter() {
-}
+};
 Weighter::Weighter(const string& filename, const string& histname) {
         TFile f(filename.c_str());
         h = (TH1*) f.Get(histname.c_str());
@@ -16,7 +16,7 @@ Weighter::Weighter(const string& filename, const string& histname) {
                      << histname << " in file " << filename << endl;
         }
         f.Close();
-}
+};
 
 // deleting the histogram pointer leads to segmentation violations
 // ~Weighter() {
@@ -24,18 +24,18 @@ Weighter::Weighter(const string& filename, const string& histname) {
 
 float Weighter::getWeight(float value) {
         return h ? h->GetBinContent( h->FindFixBin(value) ) : 1.;
-}
+};
 
 float Weighter::getError(float value) {
         return h ? h->GetBinError( h->FindFixBin(value) ) : 1.;
-}
+};
 
 float Weighter::getWeight(float x, float y) {
         return h ? h->GetBinContent( h->FindFixBin(x,y) ) : 1.;
-}
+};
 float Weighter::getError(float x, float y) {
         return h ? h->GetBinError( h->FindFixBin(x,y) ) : 1.;
-}
+};
 
 void Weighter::fillOverflow2d() {
         int nX = h->GetNbinsX();
@@ -48,4 +48,4 @@ void Weighter::fillOverflow2d() {
                 if (!h->GetBinContent(0, y)) h->SetBinContent(0, y, h->GetBinContent(1, y));
                 if (!h->GetBinContent(nX+1, y)) h->SetBinContent(nX+1, y, h->GetBinContent(nX, y));
         }
-}
+};

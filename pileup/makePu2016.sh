@@ -1,0 +1,1 @@
+pileupCalc.py -i Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt --inputLumiJSON pileUpData2016.txt --calcMode true --minBiasXsec 69200 --maxPileupBin 100 --numPileupBins 100 dataPU2016.root

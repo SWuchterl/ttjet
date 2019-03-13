@@ -23,106 +23,107 @@
 #include <TMath.h>
 
 #include <ttjet/nanoskimmer/interface/event.h>
-#include <ttjet/nanoskimmer/interface/filters.h>
+#include <ttjet/nanoskimmer/interface/filter.h>
+#include <ttjet/nanoskimmer/interface/triggerfilter.h>
+#include <ttjet/nanoskimmer/interface/metfilter.h>
 #include <ttjet/nanoskimmer/interface/particles.h>
 
-#include <ttjet/nanoskimmer/interface/skimmer.h>
+// #include <ttjet/nanoskimmer/interface/skimmer.h>
+#include <ttjet/nanoskimmer/interface/myReader.h>
 #include <ttjet/nanoskimmer/interface/RoccoR.h>
 
 using namespace std;
 
 Event::Event(){
 };
-Event::Event(Skimmer *skim){
-        skimmer=skim;
+Event::Event(MyReader &skim_,TriggerFilter &trigF_,MetFilter &metF_,RoccoR &rocco_, bool &Data){
+        // skim=skim_;
+        trigF=trigF_;
+        metF=metF_;
+        rocco=rocco_;
+        isData=Data;
 };
 // Event::Event(){
 //   ree->Branch("electron", &validElectrons);
 // };
-void Event::SetMuons(){
-
-        //scale factors for momentum of each muon:
-        // double dtSF = rc.kScaleDT(Q, pt, eta, phi, s=0, m=0); //data
-        // double mcSF = rc.kSpreadMC(Q, pt, eta, phi, genPt, s=0, m=0); //(recommended), MC scale and resolution correction when matched gen muon is available
-        // double mcSF = rc.kSmearMC(Q, pt, eta, phi, nl, u, s=0, m=0); //MC scale and extra smearing when matched gen muon is not available
-        // todo: get genMatched muon
+void Event::SetMuons(MyReader &skim){
 
 
-        for(unsigned int i=0; i<*(skimmer->nMuons); i++) {
+        for(unsigned int i=0; i<*(skim.nMuons); i++) {
                 Muon muon;
 
                 //calculate rochester muon Pt corrections
                 double SF=1.;
-                if(skimmer->isData) {
-                        SF=skimmer->rochesterCorrection->kScaleDT(skimmer->muonCharge.At(i), skimmer->muonPt.At(i), skimmer->muonEta.At(i), skimmer->muonPhi.At(i), 0, 0);
+                if(isData) {
+                        SF=rocco.kScaleDT(skim.muonCharge.At(i), skim.muonPt.At(i), skim.muonEta.At(i), skim.muonPhi.At(i), 0, 0);
                 }else{
-                        if(abs(skimmer->genPartId.At(skimmer->muonGenParticleIndex.At(i)))==13) {
-                                SF=skimmer->rochesterCorrection->kSpreadMC(skimmer->muonCharge.At(i), (skimmer->muonPt).At(i), (skimmer->muonEta).At(i), (skimmer->muonPhi).At(i),skimmer->genPartPt.At(skimmer->muonGenParticleIndex.At(i)), 0, 0);
+                        if(abs(skim.genPartId.At(skim.muonGenParticleIndex.At(i)))==13) {
+                                SF=rocco.kSpreadMC(skim.muonCharge.At(i), (skim.muonPt).At(i), (skim.muonEta).At(i), (skim.muonPhi).At(i),skim.genPartPt.At(skim.muonGenParticleIndex.At(i)), 0, 0);
                         }else{
-                                SF=skimmer->rochesterCorrection->kSmearMC(skimmer->muonCharge.At(i), (skimmer->muonPt).At(i), (skimmer->muonEta).At(i), (skimmer->muonPhi).At(i), 3, 0.5, 0, 0);
+                                SF=rocco.kSmearMC(skim.muonCharge.At(i), (skim.muonPt).At(i), (skim.muonEta).At(i), (skim.muonPhi).At(i), 3, 0.5, 0, 0);
                         }
                 }
 
                 //use them here
-                muon.L.SetPtEtaPhiM((skimmer->muonPt).At(i)*SF,(skimmer->muonEta).At(i),(skimmer->muonPhi).At(i),(skimmer->muonMass).At(i));
+                muon.L.SetPtEtaPhiM((skim.muonPt).At(i)*SF,(skim.muonEta).At(i),(skim.muonPhi).At(i),(skim.muonMass).At(i));
                 //or not?
-                // muon.L.SetPtEtaPhiM((skimmer->muonPt).At(i),(skimmer->muonEta).At(i),(skimmer->muonPhi).At(i),(skimmer->muonMass).At(i));
-                muon.charge=skimmer->muonCharge.At(i);
+                // muon.L.SetPtEtaPhiM((skim.muonPt).At(i),(skim.muonEta).At(i),(skim.muonPhi).At(i),(skim.muonMass).At(i));
+                muon.charge=skim.muonCharge.At(i);
                 muon.isLoose=false;
-                muon.isMedium=(skimmer->muonMediumId.At(i));
-                muon.isTight=(skimmer->muonTightId.At(i));
-                muon.isIsoLoose=(skimmer->muonIso.At(i)<0.25);
-                muon.isIsoTight=(skimmer->muonIso.At(i)<0.15);
+                muon.isMedium=(skim.muonMediumId.At(i));
+                muon.isTight=(skim.muonTightId.At(i));
+                muon.isIsoLoose=(skim.muonIso.At(i)<0.25);
+                muon.isIsoTight=(skim.muonIso.At(i)<0.15);
                 muons.push_back(muon);
 
         }
 };
-void Event::SetElectrons(){
-        for(unsigned int i=0; i<*(skimmer->nElectrons); i++) {
+void Event::SetElectrons(MyReader &skim){
+        for(unsigned int i=0; i<*(skim.nElectrons); i++) {
                 Electron electron;
-                electron.L.SetPtEtaPhiM(skimmer->electronPt.At(i),skimmer->electronEta.At(i),skimmer->electronPhi.At(i),skimmer->electronMass.At(i));
-                electron.charge=skimmer->electronCharge.At(i);
-                electron.isLoose=(skimmer->electronCutBasedId.At(i)>1);
-                electron.isMedium=(skimmer->electronCutBasedId.At(i)>2);
-                electron.isTight=(skimmer->electronCutBasedId.At(i)>3);
+                electron.L.SetPtEtaPhiM(skim.electronPt.At(i),skim.electronEta.At(i),skim.electronPhi.At(i),skim.electronMass.At(i));
+                electron.charge=skim.electronCharge.At(i);
+                electron.isLoose=(skim.electronCutBasedId.At(i)>1);
+                electron.isMedium=(skim.electronCutBasedId.At(i)>2);
+                electron.isTight=(skim.electronCutBasedId.At(i)>3);
                 electron.looseSF=1; //todo
                 electron.mediumSF=1;
                 electron.tightSF=1;
-                electron.isLooseMVA=skimmer->electronMVALoose.At(i);
-                electron.isMediumMVA=skimmer->electronMVAMedium.At(i);
-                electron.isTightMVA=skimmer->electronMVATight.At(i);
+                electron.isLooseMVA=skim.electronMVALoose.At(i);
+                electron.isMediumMVA=skim.electronMVAMedium.At(i);
+                electron.isTightMVA=skim.electronMVATight.At(i);
                 electron.looseMVASF=1;
                 electron.mediumMVASF=1;
                 electron.tightMVASF=1;
-                electron.isLooseMVAIso=skimmer->electronMVALooseIso.At(i);
-                electron.isMediumMVAIso=skimmer->electronMVAMediumIso.At(i);
-                electron.isTightMVAIso=skimmer->electronMVATightIso.At(i);
+                electron.isLooseMVAIso=skim.electronMVALooseIso.At(i);
+                electron.isMediumMVAIso=skim.electronMVAMediumIso.At(i);
+                electron.isTightMVAIso=skim.electronMVATightIso.At(i);
                 electron.looseMVASFIso=1;
                 electron.mediumMVASFIso=1;
                 electron.tightMVASFIso=1;
-                electron.passConversionVeto=skimmer->electronConvVeto.At(i);
+                electron.passConversionVeto=skim.electronConvVeto.At(i);
                 electrons.push_back(electron);
         }
 };
 //
-void Event::SetJets(){
-        for(unsigned int i=0; i<*(skimmer->nJets); i++) {
+void Event::SetJets(MyReader &skim){
+        for(unsigned int i=0; i<*(skim.nJets); i++) {
                 Jet jet;
-                jet.L.SetPtEtaPhiM(skimmer->jetPt.At(i),skimmer->jetEta.At(i),skimmer->jetPhi.At(i),skimmer->jetMass.At(i));
+                jet.L.SetPtEtaPhiM(skim.jetPt.At(i),skim.jetEta.At(i),skim.jetPhi.At(i),skim.jetMass.At(i));
 
                 jet.hasElectronMatch=false;
                 jet.hasMuonMatch=false;
                 // https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation2016Legacy
-                jet.isBLooseDeepCSV=(skimmer->jetBTagDiscriminator_DeepCSV.At(i)>.2217);
-                jet.isBMediumDeepCSV=(skimmer->jetBTagDiscriminator_DeepCSV.At(i)>.6321);
-                jet.isBTightDeepCSV=(skimmer->jetBTagDiscriminator_DeepCSV.At(i)>.6321);
+                jet.isBLooseDeepCSV=(skim.jetBTagDiscriminator_DeepCSV.At(i)>.2217);
+                jet.isBMediumDeepCSV=(skim.jetBTagDiscriminator_DeepCSV.At(i)>.6321);
+                jet.isBTightDeepCSV=(skim.jetBTagDiscriminator_DeepCSV.At(i)>.6321);
                 jet.bLooseSFDeepCSV=1;
                 jet.bMediumSFDeepCSV=1;
                 jet.bTightSFDeepCSV=1;
 
-                jet.isBLooseDeepJet=(skimmer->jetBTagDiscriminator_DeepFlavour.At(i)>.0614);
-                jet.isBMediumDeepJet=(skimmer->jetBTagDiscriminator_DeepFlavour.At(i)>.3093);
-                jet.isBTightDeepJet=(skimmer->jetBTagDiscriminator_DeepFlavour.At(i)>.7221);
+                jet.isBLooseDeepJet=(skim.jetBTagDiscriminator_DeepFlavour.At(i)>.0614);
+                jet.isBMediumDeepJet=(skim.jetBTagDiscriminator_DeepFlavour.At(i)>.3093);
+                jet.isBTightDeepJet=(skim.jetBTagDiscriminator_DeepFlavour.At(i)>.7221);
                 jet.bLooseSFDeepJet=1;
                 jet.bMediumSFDeepJet=1;
                 jet.bTightSFDeepJet=1;
@@ -130,23 +131,22 @@ void Event::SetJets(){
         }
 };
 //
-void Event::SetValues(){
-        met.L.SetPtEtaPhiM(*(skimmer->metPt),0.,*(skimmer->metPhi),0.);
+void Event::SetValues(MyReader &skim){
+        met.L.SetPtEtaPhiM(*(skim.metPt),0.,*(skim.metPhi),0.);
         // particle met_JECu;
 
 
         pu_weight=1.; //todo
-        mc_weight=*(skimmer->genWeight);
+        mc_weight=*(skim.genWeight);
         //
         ht=10.;
         //
-        TriggerFilter TrigFilter(skimmer,2016);
-        MetFilter MetFilter(skimmer,2016);
 
 
-        trigSingleEle=TrigFilter.getDecision(E);
-        trigSingleMu=TrigFilter.getDecision(M);
-        trigDoubleEle=TrigFilter.getDecision(EE);
-        trigDoubleMu=TrigFilter.getDecision(MM);
-        trigMuEle=TrigFilter.getDecision(EM);
+
+        trigSingleEle=trigF.getDecision(E);
+        trigSingleMu=trigF.getDecision(M);
+        trigDoubleEle=trigF.getDecision(EE);
+        trigDoubleMu=trigF.getDecision(MM);
+        trigMuEle=trigF.getDecision(EM);
 };
