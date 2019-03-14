@@ -48,7 +48,7 @@ string outFileName;
 std::chrono::steady_clock::time_point start;
 std::chrono::steady_clock::time_point end;
 // MyReader &myReader;
-
+int year;
 
 
 public:
@@ -56,7 +56,7 @@ public:
 // TFile* file = TFile::Open(inFile.c_str(), "READ");
 // Skimmer(TFile* file, string Name);
 // Skimmer(const string &inputFileName, const string &Name);
-Skimmer(const string &inputFileName_, const string &dataSetName_,const string &outName);
+Skimmer(const string &inputFileName_, const string &dataSetName_,const string &outName,const int &year_);
 
 bool Analyze();
 

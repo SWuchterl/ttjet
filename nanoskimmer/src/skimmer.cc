@@ -42,9 +42,9 @@ using namespace std;
 
 
 
-Skimmer::Skimmer(const string &inputFileName_, const string &dataSetName_,const string &outName)
+Skimmer::Skimmer(const string &inputFileName_, const string &dataSetName_,const string &outName,const int &year_)
 {
-
+        year=year_;
         outFileName=outName;
         start = std::chrono::steady_clock::now();
         std::cout << "Input file for analysis: " + inputFileName_ << std::endl;
@@ -87,12 +87,17 @@ bool Skimmer::Analyze(){
         TTree* eventTree = (TTree*)file->Get("Events");
         TTreeReader reader(eventTree);
 
-        TTree* tree = new TTree();
-        tree->SetName("Events");
-        trees.push_back(tree);
+        const std::vector<std::string> &channels{"e","m","ee","mm","em"};
+
+
+        for(const std::string &channel: channels) {
+                TTree* tree = new TTree();
+                tree->SetName(channel.c_str());
+                trees.push_back(tree);
+        }
 
         MyReader myReader(reader);
-        const int year=2016;
+        // const int year=2016;
         MetFilter METFilter;
         TriggerFilter TrigFilter;
         RoccoR rochesterCorrection("ttjet/nanoskimmer/data/rochester/RoccoR2016.txt");
@@ -133,7 +138,8 @@ bool Skimmer::Analyze(){
 
         Event event(isData);
 
-        event.SetAdresses(myReader,trees[0]);
+        // event.SetAdresses(myReader,trees[0]);
+        event.SetAdresses(myReader,trees);
 
 
         while(reader.Next()) {
@@ -145,7 +151,25 @@ bool Skimmer::Analyze(){
                         event.SetJets(myReader);
                         event.SetValues(myReader,trees[0],TrigFilter,year,PUWeighter);
 
-                        trees[0]->Fill();
+
+                        // definite order needed: e,mu,ee,mumu,emu
+
+                        if(event.SingleEleDecision()) {
+                                trees[0]->Fill();
+                        }
+                        if(event.SingleMuDecision()) {
+                                trees[1]->Fill();
+                        }
+                        if(event.DoubleEleDecision()) {
+                                trees[2]->Fill();
+                        }
+                        if(event.DoubleMuDecision()) {
+                                trees[3]->Fill();
+                        }
+                        if(event.EleMuDecision()) {
+                                trees[4]->Fill();
+                        }
+
                 }
                 processed++;
                 if(processed % 1000 == 0) {

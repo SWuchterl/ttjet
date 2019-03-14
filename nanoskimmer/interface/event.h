@@ -77,12 +77,20 @@ Event(bool &Data);
 // PileupWeighter PUWeighter;
 
 void Clear();
-void SetAdresses(MyReader &skim, TTree* tree);
+// void SetAdresses(MyReader &skim, TTree* tree);
+void SetAdresses(MyReader &skim, vector<TTree*> trees);
 void SetElectrons(MyReader &skim,Weighter &recoWeighter,Weighter &recoWeighter20, Weighter &idWeighter);
 void SetMuons(MyReader &skim,RoccoR &rocco);
 void SetJets(MyReader &skim);
 void SetValues(MyReader &skim, TTree* tree, TriggerFilter &trigF,const int &year, PileupWeighter &PUWeighter);
 bool isData;
+
+bool SingleEleDecision();
+bool SingleMuDecision();
+bool DoubleEleDecision();
+bool DoubleMuDecision();
+bool EleMuDecision();
+
 
 // attributes
 

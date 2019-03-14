@@ -129,7 +129,7 @@ def skimmer(filename, outputName):
     outName = filename.split(
         "/")[-1].split(".")[0] + "_output." + filename.split("/")[-1].split(".")[1]
     Skimmer = ROOT.Skimmer(
-        ROOT.std.string(filename), ROOT.std.string(filename), outName)
+        ROOT.std.string(filename), ROOT.std.string(filename), outName, 2016)
     Skimmer.Analyze()
 
     # Skimmer.CreateOutputTree(
@@ -158,7 +158,7 @@ def main():
         for txtFile in [txtFile for txtFile in [args.bkg_txt, args.sig_txt, args.data_txt] if txtFile != None]:
             filelist = getFilenames(txtFile)
 
-            # Submit all the things
+            # Submit
             for dirname, filenames in filelist.iteritems():
                 os.system(
                     "mkdir -p {}/{}/log".format(skimdir, dirname))

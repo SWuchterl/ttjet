@@ -47,24 +47,27 @@ Event::Event(bool &Data){
 };
 
 
-void Event::SetAdresses(MyReader &skim, TTree* tree){
-        tree->Branch("electrons", &electrons);
-        tree->Branch("muons", &muons);
-        tree->Branch("jets", &jets);
-        tree->Branch("met", &met);
-        tree->Branch("genWeight", &mc_weight);
-        tree->Branch("puWeight", &pu_weight);
-        tree->Branch("trigSingleEle", &trigSingleEle);
-        tree->Branch("trigSingleMu", &trigSingleMu);
-        tree->Branch("trigDoubleEle", &trigDoubleEle);
-        tree->Branch("trigDoubleMu", &trigDoubleMu);
-        tree->Branch("trigMuEle", &trigMuEle);
+// void Event::SetAdresses(MyReader &skim, TTree* tree){
+void Event::SetAdresses(MyReader &skim, vector<TTree*> trees){
+        for(TTree* tree: trees) {
+                tree->Branch("electrons", &electrons);
+                tree->Branch("muons", &muons);
+                tree->Branch("jets", &jets);
+                tree->Branch("met", &met);
+                tree->Branch("genWeight", &mc_weight);
+                tree->Branch("puWeight", &pu_weight);
+                tree->Branch("trigSingleEle", &trigSingleEle);
+                tree->Branch("trigSingleMu", &trigSingleMu);
+                tree->Branch("trigDoubleEle", &trigDoubleEle);
+                tree->Branch("trigDoubleMu", &trigDoubleMu);
+                tree->Branch("trigMuEle", &trigMuEle);
 
-        tree->Branch("runNr", &runNr);
-        tree->Branch("lumiNr", &lumiNr);
-        tree->Branch("eventNr", &eventNr);
+                tree->Branch("runNr", &runNr);
+                tree->Branch("lumiNr", &lumiNr);
+                tree->Branch("eventNr", &eventNr);
 
-        tree->Branch("ht", &ht);
+                tree->Branch("ht", &ht);
+        }
 
 };
 
@@ -205,4 +208,25 @@ void Event::SetValues(MyReader &skim, TTree* tree, TriggerFilter &trigF,const in
         trigDoubleEle=trigF.getDecision(skim,year,EE);
         trigDoubleMu=trigF.getDecision(skim,year,MM);
         trigMuEle=trigF.getDecision(skim,year,EM);
+};
+
+
+bool Event::SingleEleDecision(){
+        return trigSingleEle;
+};
+bool Event::SingleMuDecision(){
+        return trigSingleMu;
+
+};
+bool Event::DoubleEleDecision(){
+        return trigDoubleEle;
+
+};
+bool Event::DoubleMuDecision(){
+        return trigDoubleMu;
+
+};
+bool Event::EleMuDecision(){
+        return trigMuEle;
+
 };
