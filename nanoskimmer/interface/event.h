@@ -54,6 +54,10 @@ float mc_weight;
 
 float ht;
 
+uint runNr;
+uint lumiNr;
+unsigned long long eventNr;
+
 
 
 bool trigSingleEle;
@@ -74,10 +78,10 @@ Event(bool &Data);
 
 void Clear();
 void SetAdresses(MyReader &skim, TTree* tree);
-void SetElectrons(MyReader &skim_);
-void SetMuons(MyReader &skim_,RoccoR &rocco);
-void SetJets(MyReader &skim_);
-void SetValues(MyReader &skim_, TTree* tree, TriggerFilter &trigF,const int &year, PileupWeighter &PUWeighter);
+void SetElectrons(MyReader &skim,Weighter &recoWeighter,Weighter &recoWeighter20, Weighter &idWeighter);
+void SetMuons(MyReader &skim,RoccoR &rocco);
+void SetJets(MyReader &skim);
+void SetValues(MyReader &skim, TTree* tree, TriggerFilter &trigF,const int &year, PileupWeighter &PUWeighter);
 bool isData;
 
 // attributes

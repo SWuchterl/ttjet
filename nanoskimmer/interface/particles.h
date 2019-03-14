@@ -32,37 +32,42 @@ struct Lepton : public Particle
 
 struct Muon : public Lepton
 {
-        Bool_t isLoose;
-        Bool_t isMedium;
+        // Bool_t isLoose;
+        // Bool_t isMedium;
         Bool_t isTight;
+        // Float_t isMediumSF;
+        Float_t isTightSF;
 
-        Bool_t isIsoLoose;
+        // Bool_t isIsoLoose;
         Bool_t isIsoTight;
+        // Float_t isIsoLooseSF;
+        Float_t isIsoTightSF;
 
         // Float_t
 };
 struct Electron : public Lepton
 {
-        Bool_t isLoose;
-        Bool_t isMedium;
+        // Bool_t isLoose;
+        // Bool_t isMedium;
         Bool_t isTight;
-        Float_t looseSF;
-        Float_t mediumSF;
+        // Float_t looseSF;
+        // Float_t mediumSF;
         Float_t tightSF;
+        Bool_t isIsoTight;
+        float relIso;
+        // Bool_t isLooseMVA;
+        // Bool_t isMediumMVA;
+        // Bool_t isTightMVA;
+        // Float_t looseMVASF;
+        // Float_t mediumMVASF;
+        // Float_t tightMVASF;
 
-        Bool_t isLooseMVA;
-        Bool_t isMediumMVA;
-        Bool_t isTightMVA;
-        Float_t looseMVASF;
-        Float_t mediumMVASF;
-        Float_t tightMVASF;
-
-        Bool_t isLooseMVAIso;
-        Bool_t isMediumMVAIso;
-        Bool_t isTightMVAIso;
-        Float_t looseMVASFIso;
-        Float_t mediumMVASFIso;
-        Float_t tightMVASFIso;
+        // Bool_t isLooseMVAIso;
+        // Bool_t isMediumMVAIso;
+        // Bool_t isTightMVAIso;
+        // Float_t looseMVASFIso;
+        // Float_t mediumMVASFIso;
+        // Float_t tightMVASFIso;
 
         Bool_t passConversionVeto;
 };

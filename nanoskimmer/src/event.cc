@@ -60,6 +60,12 @@ void Event::SetAdresses(MyReader &skim, TTree* tree){
         tree->Branch("trigDoubleMu", &trigDoubleMu);
         tree->Branch("trigMuEle", &trigMuEle);
 
+        tree->Branch("runNr", &runNr);
+        tree->Branch("lumiNr", &lumiNr);
+        tree->Branch("eventNr", &eventNr);
+
+        tree->Branch("ht", &ht);
+
 };
 
 void Event::Clear(){
@@ -106,38 +112,48 @@ void Event::SetMuons(MyReader &skim,RoccoR &rocco){
                 //or not?
                 // muon.L.SetPtEtaPhiM((skim.muonPt).At(i),(skim.muonEta).At(i),(skim.muonPhi).At(i),(skim.muonMass).At(i));
                 muon.charge=skim.muonCharge.At(i);
-                muon.isLoose=false;
-                muon.isMedium=(skim.muonMediumId.At(i));
+                // muon.isLoose=false;
+                // muon.isMedium=(skim.muonMediumId.At(i));
                 muon.isTight=(skim.muonTightId.At(i));
-                muon.isIsoLoose=(skim.muonIso.At(i)<0.25);
+                // muon.isMediumSF=1.;
+                muon.isTightSF=1.;
+                // muon.isIsoLoose=(skim.muonIso.At(i)<0.25);
                 muon.isIsoTight=(skim.muonIso.At(i)<0.15);
+                // muon.isIsoLooseSF=1.;
+                muon.isIsoTightSF=1.;
                 muons.push_back(muon);
 
         }
 };
-void Event::SetElectrons(MyReader &skim){
+void Event::SetElectrons(MyReader &skim,Weighter &recoWeighter,Weighter &recoWeighter20, Weighter &idWeighter){
         for(unsigned int i=0; i<*(skim.nElectrons); i++) {
                 Electron electron;
                 electron.L.SetPtEtaPhiM(skim.electronPt.At(i),skim.electronEta.At(i),skim.electronPhi.At(i),skim.electronMass.At(i));
                 electron.charge=skim.electronCharge.At(i);
-                electron.isLoose=(skim.electronCutBasedId.At(i)>1);
-                electron.isMedium=(skim.electronCutBasedId.At(i)>2);
+                // electron.isLoose=(skim.electronCutBasedId.At(i)>1);
+                // electron.isMedium=(skim.electronCutBasedId.At(i)>2);
                 electron.isTight=(skim.electronCutBasedId.At(i)>3);
-                electron.looseSF=1; //todo
-                electron.mediumSF=1;
-                electron.tightSF=1;
-                electron.isLooseMVA=skim.electronMVALoose.At(i);
-                electron.isMediumMVA=skim.electronMVAMedium.At(i);
-                electron.isTightMVA=skim.electronMVATight.At(i);
-                electron.looseMVASF=1;
-                electron.mediumMVASF=1;
-                electron.tightMVASF=1;
-                electron.isLooseMVAIso=skim.electronMVALooseIso.At(i);
-                electron.isMediumMVAIso=skim.electronMVAMediumIso.At(i);
-                electron.isTightMVAIso=skim.electronMVATightIso.At(i);
-                electron.looseMVASFIso=1;
-                electron.mediumMVASFIso=1;
-                electron.tightMVASFIso=1;
+                // electron.looseSF=1; //todo
+                // electron.mediumSF=1;
+                if(skim.electronPt.At(i)>20.) {
+                        electron.tightSF=idWeighter.getWeight(skim.electronEta.At(i),skim.electronPt.At(i))*recoWeighter20.getWeight(skim.electronEta.At(i),skim.electronPt.At(i));
+                }else{
+                        electron.tightSF=idWeighter.getWeight(skim.electronEta.At(i),skim.electronPt.At(i))*recoWeighter.getWeight(skim.electronEta.At(i),skim.electronPt.At(i));
+                }
+                electron.isIsoTight=(skim.electronIso.At(i)<0.15);//???????????????
+                electron.relIso=skim.electronIso.At(i);
+                // electron.isLooseMVA=skim.electronMVALoose.At(i);
+                // electron.isMediumMVA=skim.electronMVAMedium.At(i);
+                // electron.isTightMVA=skim.electronMVATight.At(i);
+                // electron.looseMVASF=1;
+                // electron.mediumMVASF=1;
+                // electron.tightMVASF=1;
+                // electron.isLooseMVAIso=skim.electronMVALooseIso.At(i);
+                // electron.isMediumMVAIso=skim.electronMVAMediumIso.At(i);
+                // electron.isTightMVAIso=skim.electronMVATightIso.At(i);
+                // electron.looseMVASFIso=1;
+                // electron.mediumMVASFIso=1;
+                // electron.tightMVASFIso=1;
                 electron.passConversionVeto=skim.electronConvVeto.At(i);
                 electrons.push_back(electron);
         }
@@ -179,7 +195,9 @@ void Event::SetValues(MyReader &skim, TTree* tree, TriggerFilter &trigF,const in
         //
         ht=10.;
         //
-
+        runNr=*(skim.runNr);
+        lumiNr=*(skim.lumiNr);
+        eventNr=*(skim.eventNr);
 
 
         trigSingleEle=trigF.getDecision(skim,year,E);

@@ -37,20 +37,14 @@ using namespace std;
 
 
 
-// Skimmer::Skimmer(){
-// };
 
 
-// TFile* file = TFile::Open(inFile.c_str(), "READ");
-// Skimmer::Skimmer(TFile* file, string Name){
+
+
 
 Skimmer::Skimmer(const string &inputFileName_, const string &dataSetName_,const string &outName)
 {
-        // theReader=MyReader(inputFileName,Name);
-        // myReader = MyReader(inputFileName,Name);
-        // myReader = theReader;
-        // 2017
-        //  HLT_(reader,"HLT_");
+
         outFileName=outName;
         start = std::chrono::steady_clock::now();
         std::cout << "Input file for analysis: " + inputFileName_ << std::endl;
@@ -58,8 +52,6 @@ Skimmer::Skimmer(const string &inputFileName_, const string &dataSetName_,const 
         dataSetName=dataSetName_;
         inputFileName=inputFileName_;
 
-        // TrigFilter = new TriggerFilter(myReader,2016);
-        // METFilter = new MetFilter(myReader,2016);
 
         if((dataSetName_.find("Double")!=string::npos)||(dataSetName_.find("Single")!=string::npos)) {
                 isData=true;
@@ -95,18 +87,50 @@ bool Skimmer::Analyze(){
         TTree* eventTree = (TTree*)file->Get("Events");
         TTreeReader reader(eventTree);
 
-        // TTree* tree = new TTree();
         TTree* tree = new TTree();
         tree->SetName("Events");
         trees.push_back(tree);
 
         MyReader myReader(reader);
         const int year=2016;
-        // TTree outputTree=CreateOutputTree(outFileName);
         MetFilter METFilter;
         TriggerFilter TrigFilter;
         RoccoR rochesterCorrection("ttjet/nanoskimmer/data/rochester/RoccoR2016.txt");
         PileupWeighter PUWeighter(reader,year);
+
+        Weighter MuonSFWeighterBCDEF_tightID("ttjet/nanoskimmer/data/scaleFactors/muon/RunBCDEF_SF_ID.root","NUM_TightID_DEN_genTracks_eta_pt");
+        MuonSFWeighterBCDEF_tightID.fillOverflow2d();
+        Weighter MuonSFWeighterBCDEF_tightIDSys("ttjet/nanoskimmer/data/scaleFactors/muon/RunBCDEF_SF_ID.root","NUM_TightID_DEN_genTracks_eta_pt_syst");
+        MuonSFWeighterBCDEF_tightIDSys.fillOverflow2d();
+        Weighter MuonSFWeighterBCDEF_tightIDStat("ttjet/nanoskimmer/data/scaleFactors/muon/RunBCDEF_SF_ID.root","NUM_TightID_DEN_genTracks_eta_pt_stat");
+        MuonSFWeighterBCDEF_tightIDStat.fillOverflow2d();
+        Weighter MuonSFWeighterGH_tightID("ttjet/nanoskimmer/data/scaleFactors/muon/RunGH_SF_ID.root","NUM_TightID_DEN_genTracks_eta_pt");
+        MuonSFWeighterGH_tightID.fillOverflow2d();
+        Weighter MuonSFWeighterGH_tightIDSys("ttjet/nanoskimmer/data/scaleFactors/muon/RunGH_SF_ID.root","NUM_TightID_DEN_genTracks_eta_pt_syst");
+        MuonSFWeighterGH_tightIDSys.fillOverflow2d();
+        Weighter MuonSFWeighterGH_tightIDStat("ttjet/nanoskimmer/data/scaleFactors/muon/RunGH_SF_ID.root","NUM_TightID_DEN_genTracks_eta_pt_stat");
+        MuonSFWeighterGH_tightIDStat.fillOverflow2d();
+
+        Weighter MuonSFWeighterBCDEF_tightIso("ttjet/nanoskimmer/data/scaleFactors/muon/RunBCDEF_SF_ISO.root","NUM_TightRelIso_DEN_TightIDandIPCut_eta_pt");
+        MuonSFWeighterBCDEF_tightIso.fillOverflow2d();
+        Weighter MuonSFWeighterBCDEF_tightIsoSys("ttjet/nanoskimmer/data/scaleFactors/muon/RunBCDEF_SF_ISO.root","NUM_TightRelIso_DEN_TightIDandIPCut_eta_pt_syst");
+        MuonSFWeighterBCDEF_tightIsoSys.fillOverflow2d();
+        Weighter MuonSFWeighterBCDEF_tightIsoStat("ttjet/nanoskimmer/data/scaleFactors/muon/RunBCDEF_SF_ISO.root","NUM_TightRelIso_DEN_TightIDandIPCut_eta_pt_stat");
+        MuonSFWeighterBCDEF_tightIsoStat.fillOverflow2d();
+        Weighter MuonSFWeighterGH_tightIso("ttjet/nanoskimmer/data/scaleFactors/muon/RunGH_SF_ISO.root","NUM_TightRelIso_DEN_TightIDandIPCut_eta_pt");
+        MuonSFWeighterGH_tightIso.fillOverflow2d();
+        Weighter MuonSFWeighterGH_tightIsoSys("ttjet/nanoskimmer/data/scaleFactors/muon/RunGH_SF_ISO.root","NUM_TightRelIso_DEN_TightIDandIPCut_eta_pt_syst");
+        MuonSFWeighterGH_tightIsoSys.fillOverflow2d();
+        Weighter MuonSFWeighterGH_tightIsoStat("ttjet/nanoskimmer/data/scaleFactors/muon/RunGH_SF_ISO.root","NUM_TightRelIso_DEN_TightIDandIPCut_eta_pt_stat");
+        MuonSFWeighterGH_tightIsoStat.fillOverflow2d();
+        //pt vs eta
+        Weighter ElectronSFWeighter_ID("ttjet/nanoskimmer/data/scaleFactors/electron/2016LegacyReReco_ElectronTight_Fall17V2.root","EGamma_SF2D");
+        ElectronSFWeighter_ID.fillOverflow2d();
+        Weighter ElectronSFWeighter_Reco("ttjet/nanoskimmer/data/scaleFactors/electron/EGM2D_BtoH_low_RecoSF_Legacy2016.root","EGamma_SF2D");
+        ElectronSFWeighter_Reco.fillOverflow2d();
+        Weighter ElectronSFWeighter_Reco20("ttjet/nanoskimmer/data/scaleFactors/electron/EGM2D_BtoH_GT20GeV_RecoSF_Legacy2016.root","EGamma_SF2D");
+        ElectronSFWeighter_Reco20.fillOverflow2d();
+
         Event event(isData);
 
         event.SetAdresses(myReader,trees[0]);
@@ -115,10 +139,9 @@ bool Skimmer::Analyze(){
         while(reader.Next()) {
 
                 if(METFilter.getDecision(myReader,year)) {
-                        // Event event(myReader,TrigFilter,METFilter,rochesterCorrection,PUWeighter,isData);
                         event.Clear();
                         event.SetMuons(myReader,rochesterCorrection);
-                        event.SetElectrons(myReader);
+                        event.SetElectrons(myReader,ElectronSFWeighter_Reco,ElectronSFWeighter_Reco20,ElectronSFWeighter_ID);
                         event.SetJets(myReader);
                         event.SetValues(myReader,trees[0],TrigFilter,year,PUWeighter);
 
@@ -132,24 +155,15 @@ bool Skimmer::Analyze(){
                 continue;
         }
         // ProgressBar(100);
-        // file->Close();
+        file->Close();
         return true;
-        // file->Close();
-        // inputFileName.->Close();
+
 
 
 };
 
 
-// &TTree Skimmer::CreateOutputTree(const std::string &outFile){
-//
-//
-//
-//         TTree* tree = new TTree();
-//         // outFileName=outFile;
-//         tree->SetName("Events");
-//         return tree;
-// };
+
 void Skimmer::WriteOutput(const std::string &outFile){
 
         TFile* file = TFile::Open(outFileName.c_str(), "RECREATE");

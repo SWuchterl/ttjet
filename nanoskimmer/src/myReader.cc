@@ -81,6 +81,7 @@ MyReader::MyReader(TTreeReader &reader_) :
         electronMVATightIso(reader_,"Electron_mvaFall17V2Iso_WP80"),
         electronCharge(reader_,"Electron_charge"),
         electronConvVeto(reader_,"Electron_convVeto"),
+        electronIso(reader_,"Electron_pfRelIso03_all"),
 
 
         nJets(reader_,"nJet"),
@@ -138,6 +139,10 @@ MyReader::MyReader(TTreeReader &reader_) :
         genPartId(reader_,"GenPart_pdgId"),
         genPartStatus(reader_,"GenPart_pdgId"),
         genPartStatusFlags(reader_,"GenPart_pdgId"),
+
+        runNr(reader_,"run"),
+        lumiNr(reader_,"luminosityBlock"),
+        eventNr(reader_,"event"),
 
 
 
