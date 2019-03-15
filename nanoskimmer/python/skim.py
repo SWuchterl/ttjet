@@ -118,6 +118,8 @@ if args.batch:
         job["error"] = "{}/{}/log/job_$(Cluster).err".format(
             skimdir, dirname)
 
+        # print skimdir, dirname, filename, index
+
         job["when_to_transfer_output"] = "ON_EXIT"
         job["transfer_output_remaps"] = '"' + '{outFile} = {skimDir}/{dirName}/{outFile}'.format(
             outFile=skimFilename, skimDir=skimdir, dirName=dirname) + '"'
@@ -145,7 +147,7 @@ def skimmer(filename, outputName):
     #     "{}/src/ChargedHiggs/nano_skimming/data/xsec.yaml".format(os.environ["CMSSW_BASE"]), "r"))
 
     xSec = 1.
-    print "skimmer", filename
+    print "skimmer", filename, outputName
 
     # for key in xSecFile.keys():
     #     if key in outputName:

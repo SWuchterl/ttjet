@@ -64,6 +64,7 @@ echo 11
 ls
 cd $thisBatchPath
 echo 12
+pwd
 ls
 xrdcp $1 $(echo $1 | tr '/' '_')
 echo 13
@@ -71,6 +72,8 @@ ls
 echo $1
 voms-proxy-info
 # python ttjet/nanoskimmer/python/skim.py --filename $(echo $1 | tr '/' '_') --out-name $2 --channel $3 $4
-python /nfs/dust/cms/user/sewuchte/ttjetFWK/CMSSW_9_4_13_patch1/src/ttjet/nanoskimmer/python/skim.py --filename $(echo $1 | tr '/' '_')
+python /nfs/dust/cms/user/sewuchte/ttjetFWK/CMSSW_9_4_13_patch1/src/ttjet/nanoskimmer/python/skim.py --filename $(echo $1 | tr '/' '_') --out-name $2
+ls
 rm $(echo $1 | tr '/' '_')
+ls
 # mv *.root ../../
