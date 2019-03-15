@@ -53,11 +53,12 @@ Skimmer::Skimmer(const string &inputFileName_, const string &dataSetName_,const 
         inputFileName=inputFileName_;
 
 
-        if((dataSetName_.find("Double")!=string::npos)||(dataSetName_.find("Single")!=string::npos)) {
+        if((dataSetName_.find("Double")!=string::npos)||(dataSetName_.find("Single")!=string::npos)||(dataSetName_.find("Data")!=string::npos)) {
                 isData=true;
         }else{
                 isData=false;
         }
+        cout<<isData<<endl;
 };
 
 void Skimmer::ProgressBar(const int &progress){
@@ -96,12 +97,13 @@ bool Skimmer::Analyze(){
                 trees.push_back(tree);
         }
 
-        MyReader myReader(reader);
+        MyReader myReader(reader,isData);
         // const int year=2016;
         MetFilter METFilter;
         TriggerFilter TrigFilter;
         RoccoR rochesterCorrection("ttjet/nanoskimmer/data/rochester/RoccoR2016.txt");
-        PileupWeighter PUWeighter(reader,year);
+
+        PileupWeighter PUWeighter(reader,year,isData);
 
         Weighter MuonSFWeighterBCDEF_tightID("ttjet/nanoskimmer/data/scaleFactors/muon/RunBCDEF_SF_ID.root","NUM_TightID_DEN_genTracks_eta_pt");
         MuonSFWeighterBCDEF_tightID.fillOverflow2d();

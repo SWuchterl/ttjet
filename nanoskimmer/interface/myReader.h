@@ -41,7 +41,7 @@ public:
 // TTree *eventTree;
 // TFile *inputFile;
 // TTreeReader reader;
-
+bool isData;
 TTreeReaderValue<uint> nMuons;
 TTreeReaderArray<float> muonPt;
 TTreeReaderArray<float> muonEta;
@@ -160,8 +160,10 @@ TTreeReaderValue<bool> HLT_MuEleLow;
 
 public:
 
+
+
 // MyReader(const string &inputFileName, const string &Name);
-MyReader(TTreeReader &reader_);
+MyReader(TTreeReader &reader_,bool &isData_);
 
 
 };

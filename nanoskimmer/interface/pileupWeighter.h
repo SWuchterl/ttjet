@@ -34,17 +34,17 @@
 
 class PileupWeighter {
 protected:
-        TH1* dataHist= 0;
-        TH1* dataHistNorm=0;
-        TH1* mcHist=0;
-        TH1* mcHistNorm=0;
-        TH1* weights=0;
+TH1* dataHist= 0;
+TH1* dataHistNorm=0;
+TH1* mcHist=0;
+TH1* mcHistNorm=0;
+TH1* weights=0;
 
 public:
-        PileupWeighter();
-        PileupWeighter(TTreeReader &reader,const int &year);
-        MyReader *skimmer;
-        float GetWeight(const float & nPU, const bool &isData);
+PileupWeighter();
+PileupWeighter(TTreeReader &reader,const int &year,const bool &isData);
+MyReader *skimmer;
+float GetWeight(const float & nPU, const bool &isData);
 };
 
 

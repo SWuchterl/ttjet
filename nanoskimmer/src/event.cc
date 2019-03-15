@@ -192,9 +192,11 @@ void Event::SetValues(MyReader &skim, TTree* tree, TriggerFilter &trigF,const in
         met.L.SetPtEtaPhiM(*(skim.metPt),0.,*(skim.metPhi),0.);
         // particle met_JECu;
 
+        if (!isData) {
+                pu_weight=PUWeighter.GetWeight(*(skim.nPUTrueInt),isData); //todo
 
-        pu_weight=PUWeighter.GetWeight(*(skim.nPUTrueInt),isData); //todo
-        mc_weight=*(skim.genWeight);
+                mc_weight=*(skim.genWeight);
+        }
         //
         ht=10.;
         //

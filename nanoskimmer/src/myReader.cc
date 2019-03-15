@@ -43,9 +43,10 @@ using namespace std;
 // Skimmer::Skimmer(TFile* file, string Name){
 
 // MyReader::MyReader(const string &inputFileName, const string &Name) :
-MyReader::MyReader(TTreeReader &reader_) :
+MyReader::MyReader(TTreeReader &reader_,bool &isData_) :
         // inputFile(new TFile(inputFileName.c_str())),
         // reader("Events",inputFile),
+        isData{isData_},
         nMuons(reader_, "nMuon"),
         muonPt(reader_, "Muon_pt"), //{
         muonEta(reader_,"Muon_eta"),
@@ -58,8 +59,8 @@ MyReader::MyReader(TTreeReader &reader_) :
         muonTightId(reader_,"Muon_tightId"),
         muonDz(reader_,"Muon_dz"),
         muonDxy(reader_,"Muon_dxy"),
-        muonGenPartFlav(reader_,"Muon_genPartFlav"),
-        muonGenParticleIndex(reader_,"Muon_genPartIdx"),
+        muonGenPartFlav(reader_,isData_ ? "Muon_mvaId" : "Muon_genPartFlav"),
+        muonGenParticleIndex(reader_,isData_ ? "Muon_charge" : "Muon_genPartIdx"),
         muonCharge(reader_,"Muon_charge"),
 
         nElectrons(reader_,"nElectron"),
@@ -71,8 +72,8 @@ MyReader::MyReader(TTreeReader &reader_) :
         electronDz(reader_,"Electron_dz"),
         electronDxy(reader_,"Electron_dxy"),
         electronSIP3D(reader_,"Electron_sip3d"),
-        electronGenPartFlav(reader_,"Electron_genPartFlav"),
-        electronGenParticleIndex(reader_,"Electron_genPartIdx"),
+        electronGenPartFlav(reader_,isData_ ? "Muon_mvaId" : "Electron_genPartFlav"),
+        electronGenParticleIndex(reader_,isData_ ? "Electron_charge" : "Electron_genPartIdx"),
         electronMVALoose(reader_,"Electron_mvaFall17V2noIso_WPL"),
         electronMVAMedium(reader_,"Electron_mvaFall17V2noIso_WP90"),
         electronMVATight(reader_,"Electron_mvaFall17V2noIso_WP80"),
@@ -89,7 +90,7 @@ MyReader::MyReader(TTreeReader &reader_) :
         jetEta(reader_,"Jet_eta"),
         jetPhi(reader_,"Jet_phi"),
         jetMass(reader_,"Jet_mass"),
-        genJetIndex(reader_,"Jet_genJetIdx"),
+        genJetIndex(reader_,isData_ ? "Electron_charge" : "Jet_genJetIdx"),
         jetFlavour(reader_,"Jet_phi"),
         jetBTagDiscriminator_DeepCSV(reader_,"Jet_btagDeepB"),
         jetBTagDiscriminator_DeepFlavour(reader_,"Jet_btagDeepFlavB"),
@@ -104,10 +105,10 @@ MyReader::MyReader(TTreeReader &reader_) :
 
         nPVertex(reader_,"PV_npvs"),
         nGoodPVertex(reader_,"PV_npvsGood"),
-        nPU(reader_,"Pileup_nPU"),
-        nPUTrueInt(reader_,"Pileup_nTrueInt"),
+        nPU(reader_,isData_ ? "PV_npvs" : "Pileup_nPU"),
+        nPUTrueInt(reader_,isData_ ? "MET_pt" : "Pileup_nTrueInt"),
 
-        genWeight(reader_,"genWeight"),
+        genWeight(reader_,isData_ ? "MET_pt" : "genWeight"),
 
 
         metFilter_primaryVertex(reader_,"Flag_goodVertices"),
@@ -120,25 +121,25 @@ MyReader::MyReader(TTreeReader &reader_) :
         metFilter_eeBadSCNoise(reader_,"Flag_eeBadScFilter"),
 
 
-        nGenJet(reader_,"nGenJet"),
-        nGenJetEta(reader_,"GenJet_eta"),
-        genJetPhi(reader_,"GenJet_phi"),
-        genJetPt(reader_,"GenJet_pt"),
-        genJetMass(reader_,"GenJet_mass"),
-        genJetPartonFlavour(reader_,"GenJet_partonFlavour"),
-        genJetHadronFlavour(reader_,"GenJet_hadronFlavour"),
+        nGenJet(reader_,isData_ ? "nMuon" : "nGenJet"),
+        nGenJetEta(reader_,isData_ ? "Muon_eta" : "GenJet_eta"),
+        genJetPhi(reader_,isData_ ? "Muon_phi" : "GenJet_phi"),
+        genJetPt(reader_,isData_ ? "Muon_pt" : "GenJet_pt"),
+        genJetMass(reader_,isData_ ? "Muon_mass" : "GenJet_mass"),
+        genJetPartonFlavour(reader_,isData_ ? "Muon_charge" : "GenJet_partonFlavour"),
+        genJetHadronFlavour(reader_,isData_ ? "Muon_mvaId" : "GenJet_hadronFlavour"),
 
-        genMetPhi(reader_,"GenMET_phi"),
-        genMetPt(reader_,"GenMET_pt"),
+        genMetPhi(reader_,isData_ ? "MET_phi" : "GenMET_phi"),
+        genMetPt(reader_,isData_ ? "MET_pt" : "GenMET_pt"),
 
-        nGenPart(reader_,"nGenPart"),
-        genPartEta(reader_,"GenPart_eta"),
-        genPartPhi(reader_,"GenPart_phi"),
-        genPartPt(reader_,"GenPart_pt"),
-        genPartMotherIndex(reader_,"GenPart_genPartIdxMother"),
-        genPartId(reader_,"GenPart_pdgId"),
-        genPartStatus(reader_,"GenPart_pdgId"),
-        genPartStatusFlags(reader_,"GenPart_pdgId"),
+        nGenPart(reader_,isData_ ? "nMuon" : "nGenPart"),
+        genPartEta(reader_,isData_ ? "Muon_eta" : "GenPart_eta"),
+        genPartPhi(reader_,isData_ ? "Muon_phi" : "GenPart_phi"),
+        genPartPt(reader_,isData_ ? "Muon_pt" : "GenPart_pt"),
+        genPartMotherIndex(reader_,isData_ ? "PV_npvs" : "GenPart_genPartIdxMother"),
+        genPartId(reader_,isData_ ? "PV_npvs" : "GenPart_pdgId"),
+        genPartStatus(reader_,isData_ ? "PV_npvs" : "GenPart_pdgId"),
+        genPartStatusFlags(reader_,isData_ ? "PV_npvs" : "GenPart_pdgId"),
 
         runNr(reader_,"run"),
         lumiNr(reader_,"luminosityBlock"),
