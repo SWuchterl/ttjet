@@ -23,6 +23,7 @@
 #include <TTreeReader.h>
 #include <TTreeReaderValue.h>
 #include <TTreeReaderArray.h>
+#include <TRandom.h>
 #include <TMath.h>
 
 #include <ttjet/nanoskimmer/interface/particles.h>
@@ -80,7 +81,8 @@ void Clear();
 // void SetAdresses(MyReader &skim, TTree* tree);
 void SetAdresses(MyReader &skim, vector<TTree*> trees);
 void SetElectrons(MyReader &skim,Weighter &recoWeighter,Weighter &recoWeighter20, Weighter &idWeighter);
-void SetMuons(MyReader &skim,RoccoR &rocco);
+// void SetMuons(MyReader &skim,RoccoR &rocco);
+void SetMuons(MyReader &skim,RoccoR &rocco,TRandom &gRandom, Weighter &IDWeighter, Weighter &IDWeighterStat, Weighter &IDWeighterSyst, Weighter &ISOWeighter, Weighter &ISOWeighterStat, Weighter &ISOWeighterSyst);
 void SetJets(MyReader &skim);
 void SetValues(MyReader &skim, TTree* tree, TriggerFilter &trigF,const int &year, PileupWeighter &PUWeighter);
 bool isData;

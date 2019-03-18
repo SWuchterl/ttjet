@@ -18,6 +18,7 @@
 #include <TTree.h>
 #include <TChain.h>
 #include <TTreeReader.h>
+#include <TRandom.h>
 #include <TTreeReaderValue.h>
 #include <TTreeReaderArray.h>
 #include <TMath.h>
@@ -101,35 +102,27 @@ bool Skimmer::Analyze(){
         // const int year=2016;
         MetFilter METFilter;
         TriggerFilter TrigFilter;
+
+        // gRandom->Rndm()
+        TRandom gRandom;
         RoccoR rochesterCorrection("ttjet/nanoskimmer/data/rochester/RoccoR2016.txt");
 
         PileupWeighter PUWeighter(reader,year,isData);
 
-        Weighter MuonSFWeighterBCDEF_tightID("ttjet/nanoskimmer/data/scaleFactors/muon/RunBCDEF_SF_ID.root","NUM_TightID_DEN_genTracks_eta_pt");
-        MuonSFWeighterBCDEF_tightID.fillOverflow2d();
-        Weighter MuonSFWeighterBCDEF_tightIDSys("ttjet/nanoskimmer/data/scaleFactors/muon/RunBCDEF_SF_ID.root","NUM_TightID_DEN_genTracks_eta_pt_syst");
-        MuonSFWeighterBCDEF_tightIDSys.fillOverflow2d();
-        Weighter MuonSFWeighterBCDEF_tightIDStat("ttjet/nanoskimmer/data/scaleFactors/muon/RunBCDEF_SF_ID.root","NUM_TightID_DEN_genTracks_eta_pt_stat");
-        MuonSFWeighterBCDEF_tightIDStat.fillOverflow2d();
-        Weighter MuonSFWeighterGH_tightID("ttjet/nanoskimmer/data/scaleFactors/muon/RunGH_SF_ID.root","NUM_TightID_DEN_genTracks_eta_pt");
-        MuonSFWeighterGH_tightID.fillOverflow2d();
-        Weighter MuonSFWeighterGH_tightIDSys("ttjet/nanoskimmer/data/scaleFactors/muon/RunGH_SF_ID.root","NUM_TightID_DEN_genTracks_eta_pt_syst");
-        MuonSFWeighterGH_tightIDSys.fillOverflow2d();
-        Weighter MuonSFWeighterGH_tightIDStat("ttjet/nanoskimmer/data/scaleFactors/muon/RunGH_SF_ID.root","NUM_TightID_DEN_genTracks_eta_pt_stat");
-        MuonSFWeighterGH_tightIDStat.fillOverflow2d();
+        Weighter MuonSFWeighter_tightID("ttjet/nanoskimmer/data/scaleFactors/muon/RunBCDEFGH_SF_ID.root","NUM_TightID_DEN_genTracks_eta_pt");
+        MuonSFWeighter_tightID.fillOverflow2d();
+        Weighter MuonSFWeighter_tightIDSys("ttjet/nanoskimmer/data/scaleFactors/muon/RunBCDEFGH_SF_ID.root","NUM_TightID_DEN_genTracks_eta_pt_syst");
+        MuonSFWeighter_tightIDSys.fillOverflow2d();
+        Weighter MuonSFWeighter_tightIDStat("ttjet/nanoskimmer/data/scaleFactors/muon/RunBCDEFGH_SF_ID.root","NUM_TightID_DEN_genTracks_eta_pt_stat");
+        MuonSFWeighter_tightIDStat.fillOverflow2d();
 
-        Weighter MuonSFWeighterBCDEF_tightIso("ttjet/nanoskimmer/data/scaleFactors/muon/RunBCDEF_SF_ISO.root","NUM_TightRelIso_DEN_TightIDandIPCut_eta_pt");
-        MuonSFWeighterBCDEF_tightIso.fillOverflow2d();
-        Weighter MuonSFWeighterBCDEF_tightIsoSys("ttjet/nanoskimmer/data/scaleFactors/muon/RunBCDEF_SF_ISO.root","NUM_TightRelIso_DEN_TightIDandIPCut_eta_pt_syst");
-        MuonSFWeighterBCDEF_tightIsoSys.fillOverflow2d();
-        Weighter MuonSFWeighterBCDEF_tightIsoStat("ttjet/nanoskimmer/data/scaleFactors/muon/RunBCDEF_SF_ISO.root","NUM_TightRelIso_DEN_TightIDandIPCut_eta_pt_stat");
-        MuonSFWeighterBCDEF_tightIsoStat.fillOverflow2d();
-        Weighter MuonSFWeighterGH_tightIso("ttjet/nanoskimmer/data/scaleFactors/muon/RunGH_SF_ISO.root","NUM_TightRelIso_DEN_TightIDandIPCut_eta_pt");
-        MuonSFWeighterGH_tightIso.fillOverflow2d();
-        Weighter MuonSFWeighterGH_tightIsoSys("ttjet/nanoskimmer/data/scaleFactors/muon/RunGH_SF_ISO.root","NUM_TightRelIso_DEN_TightIDandIPCut_eta_pt_syst");
-        MuonSFWeighterGH_tightIsoSys.fillOverflow2d();
-        Weighter MuonSFWeighterGH_tightIsoStat("ttjet/nanoskimmer/data/scaleFactors/muon/RunGH_SF_ISO.root","NUM_TightRelIso_DEN_TightIDandIPCut_eta_pt_stat");
-        MuonSFWeighterGH_tightIsoStat.fillOverflow2d();
+        Weighter MuonSFWeighter_tightIso("ttjet/nanoskimmer/data/scaleFactors/muon/RunBCDEFGH_SF_ISO.root","NUM_TightRelIso_DEN_TightIDandIPCut_eta_pt");
+        MuonSFWeighter_tightIso.fillOverflow2d();
+        Weighter MuonSFWeighter_tightIsoSys("ttjet/nanoskimmer/data/scaleFactors/muon/RunBCDEFGH_SF_ISO.root","NUM_TightRelIso_DEN_TightIDandIPCut_eta_pt_syst");
+        MuonSFWeighter_tightIsoSys.fillOverflow2d();
+        Weighter MuonSFWeighter_tightIsoStat("ttjet/nanoskimmer/data/scaleFactors/muon/RunBCDEFGH_SF_ISO.root","NUM_TightRelIso_DEN_TightIDandIPCut_eta_pt_stat");
+        MuonSFWeighter_tightIsoStat.fillOverflow2d();
+
         //pt vs eta
         Weighter ElectronSFWeighter_ID("ttjet/nanoskimmer/data/scaleFactors/electron/2016LegacyReReco_ElectronTight_Fall17V2.root","EGamma_SF2D");
         ElectronSFWeighter_ID.fillOverflow2d();
@@ -148,7 +141,7 @@ bool Skimmer::Analyze(){
 
                 if(METFilter.getDecision(myReader,year)) {
                         event.Clear();
-                        event.SetMuons(myReader,rochesterCorrection);
+                        event.SetMuons(myReader,rochesterCorrection,gRandom,MuonSFWeighter_tightID,MuonSFWeighter_tightIDStat,MuonSFWeighter_tightIDSys,MuonSFWeighter_tightIso,MuonSFWeighter_tightIsoStat,MuonSFWeighter_tightIsoSys);
                         event.SetElectrons(myReader,ElectronSFWeighter_Reco,ElectronSFWeighter_Reco20,ElectronSFWeighter_ID);
                         event.SetJets(myReader);
                         event.SetValues(myReader,trees[0],TrigFilter,year,PUWeighter);

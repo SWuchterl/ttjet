@@ -20,6 +20,7 @@
 #include <TTreeReader.h>
 #include <TTreeReaderValue.h>
 #include <TTreeReaderArray.h>
+#include <TRandom.h>
 #include <TMath.h>
 
 #include <ttjet/nanoskimmer/interface/event.h>
@@ -91,7 +92,7 @@ void Event::Clear(){
 // Event::Event(){
 //   ree->Branch("electron", &validElectrons);
 // };
-void Event::SetMuons(MyReader &skim,RoccoR &rocco){
+void Event::SetMuons(MyReader &skim,RoccoR &rocco,TRandom &gRandom, Weighter &IDWeighter, Weighter &IDWeighterStat, Weighter &IDWeighterSyst, Weighter &ISOWeighter, Weighter &ISOWeighterStat, Weighter &ISOWeighterSyst){
 
 
         for(unsigned int i=0; i<*(skim.nMuons); i++) {
@@ -106,7 +107,7 @@ void Event::SetMuons(MyReader &skim,RoccoR &rocco){
                                 SF=rocco.kSpreadMC(skim.muonCharge.At(i), (skim.muonPt).At(i), (skim.muonEta).At(i), (skim.muonPhi).At(i),skim.genPartPt.At(skim.muonGenParticleIndex.At(i)), 0, 0);
                         }else{
                                 // to be corrected
-                                SF=rocco.kSmearMC(skim.muonCharge.At(i), (skim.muonPt).At(i), (skim.muonEta).At(i), (skim.muonPhi).At(i), 3, 0.5, 0, 0);
+                                SF=rocco.kSmearMC(skim.muonCharge.At(i), (skim.muonPt).At(i), (skim.muonEta).At(i), (skim.muonPhi).At(i), skim.muonNLayers.At(i), gRandom.Rndm(), 0, 0);
                         }
                 }
 
@@ -119,11 +120,11 @@ void Event::SetMuons(MyReader &skim,RoccoR &rocco){
                 // muon.isMedium=(skim.muonMediumId.At(i));
                 muon.isTight=(skim.muonTightId.At(i));
                 // muon.isMediumSF=1.;
-                muon.isTightSF=1.;
+                muon.isTightSF=isData ? 1. : IDWeighter.getWeight(skim.muonEta.At(i),skim.muonPt.At(i));
                 // muon.isIsoLoose=(skim.muonIso.At(i)<0.25);
                 muon.isIsoTight=(skim.muonIso.At(i)<0.15);
                 // muon.isIsoLooseSF=1.;
-                muon.isIsoTightSF=1.;
+                muon.isIsoTightSF=isData ? 1. : ISOWeighter.getWeight(skim.muonEta.At(i),skim.muonPt.At(i));
                 muons.push_back(muon);
 
         }
@@ -139,9 +140,9 @@ void Event::SetElectrons(MyReader &skim,Weighter &recoWeighter,Weighter &recoWei
                 // electron.looseSF=1; //todo
                 // electron.mediumSF=1;
                 if(skim.electronPt.At(i)>20.) {
-                        electron.tightSF=idWeighter.getWeight(skim.electronEta.At(i),skim.electronPt.At(i))*recoWeighter20.getWeight(skim.electronEta.At(i),skim.electronPt.At(i));
+                        electron.tightSF=isData ? 1. : idWeighter.getWeight(skim.electronEta.At(i),skim.electronPt.At(i))*recoWeighter20.getWeight(skim.electronEta.At(i),skim.electronPt.At(i));
                 }else{
-                        electron.tightSF=idWeighter.getWeight(skim.electronEta.At(i),skim.electronPt.At(i))*recoWeighter.getWeight(skim.electronEta.At(i),skim.electronPt.At(i));
+                        electron.tightSF=isData ? 1. : idWeighter.getWeight(skim.electronEta.At(i),skim.electronPt.At(i))*recoWeighter.getWeight(skim.electronEta.At(i),skim.electronPt.At(i));
                 }
                 electron.isIsoTight=(skim.electronIso.At(i)<0.15);//???????????????
                 electron.relIso=skim.electronIso.At(i);

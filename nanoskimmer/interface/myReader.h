@@ -57,6 +57,7 @@ TTreeReaderArray<float> muonDxy;
 TTreeReaderArray<unsigned char> muonGenPartFlav;
 TTreeReaderArray<int> muonGenParticleIndex;
 TTreeReaderArray<int> muonCharge;
+TTreeReaderArray<int> muonNLayers;
 
 TTreeReaderValue<uint> nElectrons;
 TTreeReaderArray<float> electronPt;

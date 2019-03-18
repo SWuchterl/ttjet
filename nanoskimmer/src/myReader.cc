@@ -62,6 +62,7 @@ MyReader::MyReader(TTreeReader &reader_,bool &isData_) :
         muonGenPartFlav(reader_,isData_ ? "Muon_mvaId" : "Muon_genPartFlav"),
         muonGenParticleIndex(reader_,isData_ ? "Muon_charge" : "Muon_genPartIdx"),
         muonCharge(reader_,"Muon_charge"),
+        muonNLayers(reader_,"Muon_nTrackerLayers"),
 
         nElectrons(reader_,"nElectron"),
         electronPt(reader_,"Electron_pt"),
