@@ -22,6 +22,13 @@
 #include <TTreeReaderValue.h>
 #include <TTreeReaderArray.h>
 #include <TMath.h>
+#include "TSystem.h"
+// #include <FactorizedJetCorrector.h>
+// #include <CondFormats/JetMETObjects.h>
+// #include <CondFormats/JetMETObjects/FactorizedJetCorrector.h>
+// #include </cvmfs/cms.cern.ch/slc6_amd64_gcc630/cms/cmssw-patch/CMSSW_9_4_13_patch1/src/CondFormats/JetMETObjects>
+#include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
+#include "CondFormats/JetMETObjects/interface/FactorizedJetCorrector.h"
 
 #include <ttjet/nanoskimmer/interface/event.h>
 #include <ttjet/nanoskimmer/interface/filter.h>
@@ -35,7 +42,7 @@
 #include <ttjet/nanoskimmer/interface/skimmer.h>
 
 using namespace std;
-
+// using namespace ROOT;
 
 
 
@@ -130,6 +137,20 @@ bool Skimmer::Analyze(){
         ElectronSFWeighter_Reco.fillOverflow2d();
         Weighter ElectronSFWeighter_Reco20("ttjet/nanoskimmer/data/scaleFactors/electron/EGM2D_BtoH_GT20GeV_RecoSF_Legacy2016.root","EGamma_SF2D");
         ElectronSFWeighter_Reco20.fillOverflow2d();
+
+        gSystem->Load("libFWCoreFWLite.so");
+        // gSystem->Load("libCondFormatsJetMETObjects");
+        // AutoLibraryLoader::enable();
+        JetCorrectorParameters *ResJetPar = new JetCorrectorParameters("ttjet/nanoskimmer/data/JEC/MC/Summer16_07Aug_V11_MC_L2L3Residual_AK4PFchs.txt");
+        JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters("ttjet/nanoskimmer/data/JEC/MC/Summer16_07Aug_V11_MC_L3Absolute_AK4PFchs.txt");
+        JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters("ttjet/nanoskimmer/data/JEC/MC/Summer16_07Aug_V11_MC_L2Relative_AK4PFchs.txt");
+        JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters("ttjet/nanoskimmer/data/JEC/MC/Summer16_07Aug_V11_MC_L1FastJet_AK4chs.txt");
+        // Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!!
+        vector<JetCorrectorParameters> vPar;
+        vPar.push_back(*L1JetPar);
+        vPar.push_back(*L2JetPar);
+        vPar.push_back(*L3JetPar);
+        vPar.push_back(*ResJetPar);
 
         Event event(isData);
 

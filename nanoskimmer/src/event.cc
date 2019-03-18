@@ -23,6 +23,9 @@
 #include <TRandom.h>
 #include <TMath.h>
 
+// #include <JetCorrectorParameters.h>
+// #include <FactorizedJetCorrector.h>
+
 #include <ttjet/nanoskimmer/interface/event.h>
 #include <ttjet/nanoskimmer/interface/filter.h>
 #include <ttjet/nanoskimmer/interface/triggerfilter.h>
@@ -185,6 +188,14 @@ void Event::SetJets(MyReader &skim){
                 jet.bMediumSFDeepJet=1;
                 jet.bTightSFDeepJet=1;
                 jets.push_back(jet);
+
+
+                float uncorrectedPt=skim.jetPt.At(i)*(1.-skim.jetRawFactor.At(i));
+
+
+
+
+
         }
 };
 //
